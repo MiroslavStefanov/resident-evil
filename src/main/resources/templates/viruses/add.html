@@ -1,0 +1,82 @@
+<div class="container jumbotron-fluid">
+    <h1 th:text="${title}"></h1>
+    <br/>
+    <form th:object="${virus}">
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input th:type="text" class="form-control" id="name" name="name" th:value="*{name}"/>
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <input type="textarea" class="form-control" id="description" name="description" th:value="*{description}"/>
+        </div>
+        <div class="form-group">
+            <label for="sideEffect">Side Effect</label>
+            <input th:type="text" class="form-control" id="sideEffect" name="sideEffect" th:value="*{sideEffects}"/>
+        </div>
+        <div class="form-group">
+            <label for="creator">Side Effect</label>
+            <input th:type="text" class="form-control" id="creator" name="creator" th:value="*{creator}"/>
+        </div>
+        <div class="form-group">
+            <div class="form-check form-check-inline">
+                <input th:type="checkbox" class="form-check" id="deadly" name="deadly" th:checked="*{deadly}"/>is Deadly?
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="form-check form-check-inline">
+                <input th:type="checkbox" class="form-check" name="curable" th:checked="*{curable}"/>is Curable?
+            </div>
+        </div>
+        <th:block th:each="mut : ${T(org.softuni.residentevil.models.entities.Mutation).values()}">
+            <div class="form-group">
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input text-danger" th:id="${mut.toString()}" type="radio" name="mutation" value="${mut}"
+                           th:checked="${virus.mutation.toString() == mut.toString()}">
+                    <label class="text-danger" th:text="${mut.toString()}" th:for="${mut.toString()}"></label>
+                </div>
+            </div>
+        </th:block>
+        <div class="form-group">
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="mutation" id="radio4" value="option4" disabled>
+                <label class="form-check-label" for="radio4">Save Humanity</label>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="turnoverRate">Turnover Rate</label>
+            <input th:type="number" class="form-control" id="turnoverRate" name="turnoverRate" th:value="*{turnoverRate}"/>
+        </div>
+        <div class="form-group">
+            <label for="hoursUntilTurn">Hours Until Turn</label>
+            <input th:type="number" class="form-control" id="hoursUntilTurn" name="hoursUntilTurn" th:value="*{hoursUntilTurn}"/>
+        </div>
+        <div class="form-group">
+            <label for="magnitude">Magnitude</label>
+            <select id="magnitude" name="magnitude" class="form-control">
+                <th:block th:each="mag : ${T(org.softuni.residentevil.models.entities.Magnitude).values()}">
+                    <option th:value="${mag}" th:selected="${virus.magnitude.toString() == mag.toString()}" th:text="${mag.toString()}"></option>
+                </th:block>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="releaseDate">Release Date</label>
+            <input th:type="date" class="form-control" id="releaseDate" name="releasedOn"
+                   th:value="*{releasedOn}"/>
+        </div>
+        <div class="form-group">
+            <label for="affectedCapitals">Affected Capitals</label>
+            <select multiple id="affectedCapitals" class="form-control">
+                <th:block th:each="capital : ${allCapitals}">
+                    <option th:value="${capital.id}" th:selected="${#sets.contains(virus.capitals, capital)}"
+                            th:text="${capital.name}"></option>
+                </th:block>
+            </select>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-4 offset-sm-5">
+                <input type="submit" class="btn btn-primary" th:value="${action}"/>
+            </div>
+        </div>
+    </form>
+</div>
