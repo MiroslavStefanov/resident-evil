@@ -1,9 +1,9 @@
 package org.softuni.residentevil.services;
 
-import org.softuni.residentevil.models.entities.Capital;
+import org.softuni.residentevil.models.binding.CapitalBindingViewModel;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CapitalService {
-    List<Capital> getAll();
+    Set<CapitalBindingViewModel> getAll();
 }

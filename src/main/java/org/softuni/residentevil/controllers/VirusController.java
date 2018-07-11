@@ -1,22 +1,20 @@
 package org.softuni.residentevil.controllers;
 
-import org.softuni.residentevil.models.entities.Capital;
-import org.softuni.residentevil.models.entities.Magnitude;
-import org.softuni.residentevil.models.entities.Mutation;
-import org.softuni.residentevil.models.entities.Virus;
+import org.softuni.residentevil.models.binding.CapitalBindingViewModel;
+import org.softuni.residentevil.models.binding.VirusBindingModel;
 import org.softuni.residentevil.services.CapitalService;
 import org.softuni.residentevil.services.VirusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import javax.validation.Valid;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Controller
@@ -33,17 +31,27 @@ public class VirusController extends BaseController {
 
     @GetMapping("/add")
     public ModelAndView create(ModelAndView modelAndView) {
-        Virus virus = new Virus();
-        List<Capital> capitals = this.capitalService.getAll();
-        virus.setCapitals(new HashSet<>(capitals));
-        virus.setDeadly(true);
-        virus.setMutation(Mutation.ZOMBIE);
-        virus.setMagnitude(Magnitude.Low);
-        virus.setReleasedOn(LocalDate.now().minusDays(1));
         modelAndView.addObject("title", "Spread a new Virus!");
-        modelAndView.addObject("virus", virus);
-        modelAndView.addObject("allCapitals", capitals);
+        modelAndView.addObject("allCapitals", this.capitalService.getAll());
         modelAndView.addObject("action", "Create Virus!");
+        modelAndView.addObject("virus", new VirusBindingModel());
+
         return this.view("viruses/add", modelAndView);
+    }
+
+    @PostMapping("/add")
+    public ModelAndView createPost(@Valid @ModelAttribute("virus") VirusBindingModel virusBindingModel, BindingResult bindingResult, ModelAndView modelAndView) {
+        if(bindingResult.hasErrors()) {
+            Set<CapitalBindingViewModel> allCapitals = this.capitalService.getAll();
+            virusBindingModel.fillCapitalsName(allCapitals);
+            modelAndView.addObject("virus", virusBindingModel);
+            modelAndView.addObject("title", "Spread a new Virus!");
+            modelAndView.addObject("allCapitals", allCapitals);
+            modelAndView.addObject("action", "Create Virus!");
+            return this.view("viruses/add", modelAndView);
+        } else{
+            this.virusService.saveVirus(virusBindingModel);
+            return this.redirect("/");
+        }
     }
 }

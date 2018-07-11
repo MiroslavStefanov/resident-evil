@@ -1,0 +1,8 @@
+<input
+       th:type="${type}"
+       th:id="${fieldName}"
+       th:name="${fieldName}"
+       th:value="*{__${fieldName}__}"
+       th:field="*{__${fieldName}__}"
+       th:classappend="|${hasError ? 'is-invalid' : ''} ${inputClass != null ? inputClass : ''}|"
+/>

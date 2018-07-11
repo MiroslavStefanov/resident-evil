@@ -1,19 +1,21 @@
-package org.softuni.residentevil.models.entities;
+package org.softuni.residentevil.models.binding;
 
 import org.softuni.residentevil.core.validation.annotations.PastDate;
 import org.softuni.residentevil.core.validation.annotations.VirusCreator;
+import org.softuni.residentevil.models.entities.Magnitude;
+import org.softuni.residentevil.models.entities.Mutation;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-@Entity
-@Table(name = "viruses")
-public class Virus {
-    private Long id;
+public class VirusBindingModel {
     private String name;
     private String description;
     private String sideEffects;
@@ -25,25 +27,14 @@ public class Virus {
     private Short hoursUntilTurn;
     private Magnitude magnitude;
     private LocalDate releasedOn;
-    private Set<Capital> capitals;
+    private Set<CapitalBindingViewModel> capitals;
 
-    public Virus() {
-        this.capitals = new HashSet<>();
-    }
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public VirusBindingModel() {
+        this.capitals = new LinkedHashSet<>();
     }
 
     @NotNull
     @Size(min = 3, max = 10)
-    @Column(length = 10)
     public String getName() {
         return name;
     }
@@ -54,7 +45,6 @@ public class Virus {
 
     @NotNull
     @Size(min = 5, max = 100)
-    @Column(columnDefinition = "TEXT")
     public String getDescription() {
         return description;
     }
@@ -63,8 +53,8 @@ public class Virus {
         this.description = description;
     }
 
+    @NotNull
     @Size(max = 50)
-    @Column(length = 50)
     public String getSideEffects() {
         return sideEffects;
     }
@@ -73,7 +63,6 @@ public class Virus {
         this.sideEffects = sideEffects;
     }
 
-    @Column(name = "is_deadly")
     public Boolean getDeadly() {
         return isDeadly;
     }
@@ -91,7 +80,6 @@ public class Virus {
         isDeadly = deadly;
     }
 
-    @Column(name = "is_curable")
     public Boolean getCurable() {
         return isCurable;
     }
@@ -101,7 +89,6 @@ public class Virus {
     }
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     public Mutation getMutation() {
         return mutation;
     }
@@ -131,7 +118,6 @@ public class Virus {
     }
 
     @NotNull
-    @Enumerated(EnumType.STRING)
     public Magnitude getMagnitude() {
         return magnitude;
     }
@@ -141,6 +127,7 @@ public class Virus {
     }
 
     @PastDate
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
     public LocalDate getReleasedOn() {
         return releasedOn;
     }
@@ -149,12 +136,27 @@ public class Virus {
         this.releasedOn = releasedOn;
     }
 
-    @ManyToMany
-    public Set<Capital> getCapitals() {
+    public Set<CapitalBindingViewModel> getCapitals() {
         return this.capitals;
     }
 
-    public void setCapitals(Set<Capital> capitals) {
-        this.capitals = capitals;
+    public void setCapitals(Set<Long> capitals) {
+        this.capitals = capitals.stream().map(l -> new CapitalBindingViewModel(l, "")).collect(Collectors.toSet());
+    }
+
+    public void fillCapitalsName(Set<CapitalBindingViewModel> allCapitals) {
+        this.capitals.forEach(
+                capitalModel -> capitalModel.setName(
+                        allCapitals
+                                .stream()
+                                .filter(
+                                        c -> c
+                                                .getId()
+                                                .equals(capitalModel.getId()))
+                                .findFirst()
+                                .orElse(null)
+                                .getName()
+                )
+        );
     }
 }
