@@ -1,19 +1,22 @@
 package org.softuni.residentevil.models.entities;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.softuni.residentevil.core.validation.annotations.PastDate;
 import org.softuni.residentevil.core.validation.annotations.VirusCreator;
 
 import javax.persistence.*;
-import javax.validation.constraints.*;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "viruses")
 public class Virus {
-    private Long id;
+    private String id;
     private String name;
     private String description;
     private String sideEffects;
@@ -32,12 +35,17 @@ public class Virus {
     }
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    public Long getId() {
+    @GeneratedValue(generator = "UUID")
+    @GenericGenerator(
+            name = "UUID",
+            strategy = "org.hibernate.id.UUIDGenerator"
+    )
+    @Column(name = "id", updatable = false, nullable = false)
+    public String getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(String id) {
         this.id = id;
     }
 
@@ -73,11 +81,6 @@ public class Virus {
         this.sideEffects = sideEffects;
     }
 
-    @Column(name = "is_deadly")
-    public Boolean getDeadly() {
-        return isDeadly;
-    }
-
     @VirusCreator
     public String getCreator() {
         return creator;
@@ -85,6 +88,11 @@ public class Virus {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    @Column(name = "is_deadly")
+    public Boolean getDeadly() {
+        return isDeadly;
     }
 
     public void setDeadly(Boolean deadly) {

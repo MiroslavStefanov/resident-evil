@@ -1,12 +1,12 @@
 package org.softuni.residentevil.services;
 
-import org.softuni.residentevil.models.binding.CapitalBindingViewModel;
+import org.softuni.residentevil.models.entities.Capital;
 import org.softuni.residentevil.repositories.CapitalRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -20,11 +20,12 @@ public class CapitalServiceImpl implements CapitalService {
     }
 
     @Override
-    public Set<CapitalBindingViewModel> getAll() {
+    public List<String> getAllCapitalsNames() {
         return this.capitalRepository
                 .findAll()
                 .stream()
-                .map(cap -> new CapitalBindingViewModel(cap.getId(), cap.getName()))
-                .collect(Collectors.toSet());
+                .map(Capital::getName)
+                .sorted()
+                .collect(Collectors.toList());
     }
 }

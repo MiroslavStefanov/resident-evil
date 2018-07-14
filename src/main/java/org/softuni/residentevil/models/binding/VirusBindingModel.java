@@ -6,14 +6,11 @@ import org.softuni.residentevil.models.entities.Magnitude;
 import org.softuni.residentevil.models.entities.Mutation;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.time.LocalDate;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 public class VirusBindingModel {
     private String name;
@@ -27,10 +24,10 @@ public class VirusBindingModel {
     private Short hoursUntilTurn;
     private Magnitude magnitude;
     private LocalDate releasedOn;
-    private Set<CapitalBindingViewModel> capitals;
+    private List<String> capitals;
 
     public VirusBindingModel() {
-        this.capitals = new LinkedHashSet<>();
+        this.capitals = new ArrayList<>();
     }
 
     @NotNull
@@ -53,7 +50,6 @@ public class VirusBindingModel {
         this.description = description;
     }
 
-    @NotNull
     @Size(max = 50)
     public String getSideEffects() {
         return sideEffects;
@@ -63,10 +59,6 @@ public class VirusBindingModel {
         this.sideEffects = sideEffects;
     }
 
-    public Boolean getDeadly() {
-        return isDeadly;
-    }
-
     @VirusCreator
     public String getCreator() {
         return creator;
@@ -74,6 +66,10 @@ public class VirusBindingModel {
 
     public void setCreator(String creator) {
         this.creator = creator;
+    }
+
+    public Boolean getDeadly() {
+        return isDeadly;
     }
 
     public void setDeadly(Boolean deadly) {
@@ -126,6 +122,7 @@ public class VirusBindingModel {
         this.magnitude = magnitude;
     }
 
+    @NotNull
     @PastDate
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     public LocalDate getReleasedOn() {
@@ -136,27 +133,12 @@ public class VirusBindingModel {
         this.releasedOn = releasedOn;
     }
 
-    public Set<CapitalBindingViewModel> getCapitals() {
-        return this.capitals;
+    @NotEmpty
+    public List<String> getCapitals() {
+        return Collections.unmodifiableList(this.capitals);
     }
 
-    public void setCapitals(Set<Long> capitals) {
-        this.capitals = capitals.stream().map(l -> new CapitalBindingViewModel(l, "")).collect(Collectors.toSet());
-    }
-
-    public void fillCapitalsName(Set<CapitalBindingViewModel> allCapitals) {
-        this.capitals.forEach(
-                capitalModel -> capitalModel.setName(
-                        allCapitals
-                                .stream()
-                                .filter(
-                                        c -> c
-                                                .getId()
-                                                .equals(capitalModel.getId()))
-                                .findFirst()
-                                .orElse(null)
-                                .getName()
-                )
-        );
+    public void setCapitals(List<String> capitals) {
+        this.capitals = capitals;
     }
 }

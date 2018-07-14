@@ -1,21 +1,16 @@
 package org.softuni.residentevil.controllers;
 
-import org.softuni.residentevil.models.binding.CapitalBindingViewModel;
 import org.softuni.residentevil.models.binding.VirusBindingModel;
+import org.softuni.residentevil.models.view.VirusCreateViewModel;
 import org.softuni.residentevil.services.CapitalService;
 import org.softuni.residentevil.services.VirusService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.validation.Valid;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @Controller
 @RequestMapping("/viruses")
@@ -30,28 +25,86 @@ public class VirusController extends BaseController {
     }
 
     @GetMapping("/add")
-    public ModelAndView create(ModelAndView modelAndView) {
-        modelAndView.addObject("title", "Spread a new Virus!");
-        modelAndView.addObject("allCapitals", this.capitalService.getAll());
-        modelAndView.addObject("action", "Create Virus!");
-        modelAndView.addObject("virus", new VirusBindingModel());
-
-        return this.view("viruses/add", modelAndView);
+    public ModelAndView create() {
+        VirusCreateViewModel viewModel = new VirusCreateViewModel(
+                "Spread a new Virus",
+                "create",
+                this.capitalService.getAllCapitalsNames()
+        );
+        return this.view("viruses/add", viewModel);
     }
 
     @PostMapping("/add")
-    public ModelAndView createPost(@Valid @ModelAttribute("virus") VirusBindingModel virusBindingModel, BindingResult bindingResult, ModelAndView modelAndView) {
+    public ModelAndView createPost(
+            @Valid @ModelAttribute("viewModel") VirusCreateViewModel virusCreateViewModel,
+            BindingResult bindingResult
+    ) {
         if(bindingResult.hasErrors()) {
-            Set<CapitalBindingViewModel> allCapitals = this.capitalService.getAll();
-            virusBindingModel.fillCapitalsName(allCapitals);
-            modelAndView.addObject("virus", virusBindingModel);
-            modelAndView.addObject("title", "Spread a new Virus!");
-            modelAndView.addObject("allCapitals", allCapitals);
-            modelAndView.addObject("action", "Create Virus!");
-            return this.view("viruses/add", modelAndView);
+            virusCreateViewModel.setTitle("Spread a new Virus");
+            virusCreateViewModel.setAction("create");
+            virusCreateViewModel.setAllCapitals(this.capitalService.getAllCapitalsNames());
+            return this.view("viruses/add", virusCreateViewModel);
         } else{
-            this.virusService.saveVirus(virusBindingModel);
+            this.virusService.saveVirus(virusCreateViewModel.getVirusBindingModel());
             return this.redirect("/");
         }
+    }
+
+    @GetMapping("/edit/{id}")
+    public ModelAndView edit(@PathVariable(name="id")String id) {
+        VirusBindingModel virusBindingModel = this.virusService.getVirus(id);
+
+        VirusCreateViewModel viewModel = new VirusCreateViewModel(
+                "Edit Virus!",
+                "edit",
+                this.capitalService.getAllCapitalsNames(),
+                virusBindingModel
+        );
+
+        return this.view("viruses/add", viewModel);
+    }
+
+    @PostMapping("/edit/{id}")
+    public ModelAndView editPost(
+            @Valid @ModelAttribute VirusCreateViewModel virusCreateViewModel,
+            BindingResult bindingResult,
+            @PathVariable(name="id") String id
+    ) {
+        if(bindingResult.hasErrors()) {
+            virusCreateViewModel.setTitle("Edit Virus");
+            virusCreateViewModel.setAction("edit");
+            virusCreateViewModel.setAllCapitals(this.capitalService.getAllCapitalsNames());
+
+            return this.view("viruses/add", virusCreateViewModel);
+        } else{
+            this.virusService.updateVirus(id, virusCreateViewModel.getVirusBindingModel());
+
+            return this.redirect("/");
+        }
+    }
+
+    @GetMapping("/delete/{id}")
+    public ModelAndView delete(@PathVariable(name="id")String id) {
+        VirusBindingModel virusBindingModel = this.virusService.getVirus(id);
+
+        VirusCreateViewModel viewModel = new VirusCreateViewModel(
+                "Edit Virus!",
+                "delete",
+                this.capitalService.getAllCapitalsNames(),
+                virusBindingModel
+        );
+
+        return this.view("viruses/add", viewModel);
+    }
+
+    @PostMapping("/delete/{id}")
+    public ModelAndView deletePost(@PathVariable(name="id") String id) {
+        this.virusService.deleteVirus(id);
+        return this.redirect("/");
+    }
+
+    @GetMapping("")
+    public ModelAndView showAll() {
+        return super.view("viruses/all", this.virusService.getAllViruses());
     }
 }

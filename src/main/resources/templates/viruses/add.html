@@ -1,58 +1,61 @@
-<div class="container jumbotron-fluid">
-    <h1 th:text="${title}"></h1>
+<div class="container jumbotron-fluid" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="viewModel" type="org.softuni.residentevil.models.view.VirusCreateViewModel"*/-->
+    <h1 th:text="${viewModel.title}"></h1>
     <br/>
-    <form method="post" th:object="${virus}">
-        <th:block th:include="fragments/forms/form-control"
-                             th:with="type='text',label='Name',fieldName='name',errorText='Invalid name'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='textarea',label='Description',fieldName='description',errorText='Invalid description'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='text',label='Side Effect',fieldName='sideEffects',errorText='Invalid side effects'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='text',label='Creator',fieldName='creator',errorText='Invalid creator'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='checkbox',label='is Deadly?',fieldName='deadly'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='checkbox',label='is Curable?',fieldName='curable'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='radio-group', collection = ${T(org.softuni.residentevil.models.entities.Mutation).values()}, fieldName = 'mutation', labelClass = 'text-danger'">
-        </th:block>
+    <form method="post"
+          th:object="${viewModel.virusBindingModel}">
+        <fieldset th:disabled="${viewModel.action == 'delete'}" }>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='text',label='Name',fieldName='name',errorText='Invalid name', errorText = 'Invalid name'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='textarea',label='Description',fieldName='description',errorText='Invalid description'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='text',label='Side Effect',fieldName='sideEffects',errorText='Invalid side effects'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='text',label='Creator',fieldName='creator',errorText='Invalid creator'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='checkbox',label='is Deadly?',fieldName='deadly'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='checkbox',label='is Curable?',fieldName='curable'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='radio-group', collection = ${T(org.softuni.residentevil.models.entities.Mutation).values()}, fieldName = 'mutation', labelClass = 'text-danger', errorText='Mutation cannot be null'">
+            </th:block>
 
-        <div class="form-group">
-            <div class="form-check">
-                <input type="radio" name="mutation" id="radio4" value="option4" disabled>
-                <label class="form-check-label text-muted" for="radio4">Save Humanity</label>
+            <div class="form-group">
+                <div class="form-check">
+                    <input type="radio" name="mutation" id="radio4" value="option4" disabled>
+                    <label class="form-check-label text-muted" for="radio4">Save Humanity</label>
+                </div>
             </div>
-        </div>
 
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='number',label='Turnover Rate',fieldName='turnoverRate',errorText='Invalid turnover rate'">
-        </th:block>
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='number',label='Hours Until Turn',fieldName='hoursUntilTurn',errorText='Invalid hours until turn'">
-        </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='number',label='Turnover Rate',fieldName='turnoverRate',errorText='Invalid turnover rate'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='number',label='Hours Until Turn',fieldName='hoursUntilTurn',errorText='Invalid hours until turn'">
+            </th:block>
 
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='select', fieldName='magnitude', label='Magnitude', isMultiple=false, collection=${T(org.softuni.residentevil.models.entities.Magnitude).values()}, errorText='Magnitude cannot be null'">
-        </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='select', fieldName='magnitude', label='Magnitude', isMultiple=false, collection=${T(org.softuni.residentevil.models.entities.Magnitude).values()}, errorText='Magnitude cannot be null'">
+            </th:block>
 
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='date',label='Release Date',fieldName='releasedOn',errorText='Invalid release date'">
-        </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='date',label='Release Date',fieldName='releasedOn',errorText='Invalid release date', isDisabled=${viewModel.action == 'edit'}">
+            </th:block>
 
-        <th:block th:include="fragments/forms/form-control"
-                  th:with="type='select', fieldName='capitals', label='Affected Capitals', isMultiple=true, collection=${allCapitals}, errorText='You must select capitals', isObject=true">
-        </th:block>
-
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='select', fieldName='capitals', label='Affected Capitals', isMultiple=true, collection=${viewModel.allCapitals}, errorText='You must select capitals', isObject=false">
+            </th:block>
+        </fieldset>
         <div class="form-group">
             <div class="col-sm-4 offset-sm-5">
-                <input type="submit" class="btn btn-primary" th:value="${action}"/>
+                <input type="submit" class="btn btn-primary" th:value="${#strings.capitalize(viewModel.action) + ' Virus!'}"/>
             </div>
         </div>
     </form>

@@ -24,6 +24,11 @@
                 th:with="fieldName=${fieldName}, hasError=${hasError}, inputClass=${inputClass}, collection=${collection}">
         </th:block>
         <th:block
+                th:case="'textarea'"
+                th:include="fragments/forms/textarea"
+                th:with="fieldName=${fieldName}, hasError=${hasError}, inputClass=${#strings.concat(inputClass, ' form-control')}">
+        </th:block>
+        <th:block
                 th:case="*"
                 th:include="fragments/forms/input"
                 th:with="fieldName=${fieldName}, hasError=${hasError}, inputClass=${#strings.concat(inputClass, ' form-control')}, type=${type}">

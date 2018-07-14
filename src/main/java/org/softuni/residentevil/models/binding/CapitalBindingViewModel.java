@@ -1,4 +1,4 @@
-package org.softuni.residentevil.models.binding;
+/*package org.softuni.residentevil.models.binding;
 
 public class CapitalBindingViewModel {
     private Long id;
@@ -32,4 +32,4 @@ public class CapitalBindingViewModel {
     public String toString() {
         return this.name;
     }
-}
+}*/

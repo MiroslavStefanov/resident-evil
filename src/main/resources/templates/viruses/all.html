@@ -1,0 +1,22 @@
+<table class="table" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="viewModel" type="java.util.List<org.softuni.residentevil.models.view.VirusShowViewModel>"*/-->
+    <!--/*@thymesVar id="virus" type="org.softuni.residentevil.models.view.VirusShowViewModel"*/-->
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Magnitude</th>
+        <th scope="col">Released On</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="virus, iter : ${viewModel}" th:object="${virus}">
+        <th scope="row" th:text="${iter.index + 1}"></th>
+        <td th:text="*{name}"></td>
+        <td th:text="*{magnitude}"></td>
+        <td th:text="*{#temporals.format(releasedOn, 'dd-MMM-yyyy')}"></td>
+        <td><a class="btn btn-light border-dark" th:href="@{/viruses/edit/{id}(id = *{id})}">Edit</a></td>
+        <td><a class="btn btn-light border-dark" th:href="@{/viruses/delete/{id}(id = *{id})}">Delete</a></td>
+    </tr>
+    </tbody>
+</table>
