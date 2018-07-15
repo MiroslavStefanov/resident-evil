@@ -54,6 +54,15 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public String getUserName(String userId) {
+        if (userId == null)
+            return  null;
+
+        Optional<User> userCandidate = this.userRepository.findById(userId);
+        return userCandidate.map(User::getUsername).orElse(null);
+    }
+
+    @Override
     public UserRole getUserRole(String userId) {
         Optional<User> userCandidate = this.userRepository.findById(userId);
         return userCandidate.map(User::getRole).orElse(null);

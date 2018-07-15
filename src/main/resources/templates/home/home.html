@@ -1,0 +1,3 @@
+<div class="container jumbotron-fluid"  xmlns:th="http://www.thymeleaf.org">
+    <h1 th:text="'Welcome back, '+${@userServiceImpl.getUserName(#strings.toString(#session.getAttribute('user-id')))}"></h1>
+</div>

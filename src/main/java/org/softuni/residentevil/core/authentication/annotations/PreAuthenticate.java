@@ -1,4 +1,4 @@
-package org.softuni.residentevil.core.validation.annotations;
+package org.softuni.residentevil.core.authentication.annotations;
 
 import org.softuni.residentevil.core.validation.validators.EmailValidator;
 
@@ -11,7 +11,7 @@ import static java.lang.annotation.ElementType.*;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 
-@Target({METHOD})
+@Target({METHOD, TYPE})
 @Retention(RUNTIME)
 @Constraint(validatedBy = EmailValidator.class)
 public @interface PreAuthenticate {

@@ -1,6 +1,6 @@
 package org.softuni.residentevil.controllers;
 
-import org.softuni.residentevil.core.validation.annotations.PreAuthenticate;
+import org.softuni.residentevil.core.authentication.annotations.PreAuthenticate;
 import org.softuni.residentevil.models.binding.UserLoginBindingModel;
 import org.softuni.residentevil.models.binding.UserRegisterBindingModel;
 import org.softuni.residentevil.services.UserService;
@@ -18,6 +18,7 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/users")
+@PreAuthenticate
 public class UserController extends BaseController {
     private final UserService userService;
 
@@ -26,13 +27,11 @@ public class UserController extends BaseController {
         this.userService = userService;
     }
 
-    @PreAuthenticate(loggedIn = false)
     @GetMapping("/register")
     public ModelAndView register() {
         return super.view("users/register", new UserRegisterBindingModel());
     }
 
-    @PreAuthenticate(loggedIn = false)
     @PostMapping("/register")
     public ModelAndView registerPost(
             @Valid @ModelAttribute("viewModel") UserRegisterBindingModel userRegisterBindingModel,
@@ -50,17 +49,15 @@ public class UserController extends BaseController {
             if(loggedInUserId != null) {
                 httpSession.setAttribute("user-id", loggedInUserId);
             }
-            return super.redirect("home/home");
+            return super.redirect("/home");
         }
     }
 
-    @PreAuthenticate(loggedIn = false)
     @GetMapping("/login")
     public ModelAndView login() {
         return super.view("users/login", new UserLoginBindingModel());
     }
 
-    @PreAuthenticate(loggedIn = false)
     @PostMapping("/login")
     public ModelAndView loginPost(
             @ModelAttribute("viewModel") UserLoginBindingModel userLoginBindingModel,
@@ -74,7 +71,7 @@ public class UserController extends BaseController {
             return super.view("users/login", userLoginBindingModel);
         } else {
             httpSession.setAttribute("user-id", loggedInUserId);
-            return super.redirect("/viruses/add");
+            return super.redirect("/home");
         }
     }
 

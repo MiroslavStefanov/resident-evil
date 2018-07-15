@@ -1,0 +1,16 @@
+<br/>
+<div class="container" xmlns:th="http://www.thymeleaf.org">
+    <div class="jumbotron-fluid border-white">
+        <h1 class="text-justify text-center text-danger">You have to be logged in for the action!</h1>
+    </div>
+    <hr/>
+    <div class="container">
+        <p class="text-center">You can visit our <a class="text-primary d-inline-block" th:href="@{/}"
+                                                    th:text="Home"></a> page.
+            <br/>
+            If you already have an account, please <a class="text-primary d-inline-block" th:href="@{/users/login}"
+                                                      th:text="Login"></a>, else create one <a
+                    class="text-primary d-inline-block" th:href="@{/users/register}" th:text="here"></a>.
+        </p>
+    </div>
+</div>

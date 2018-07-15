@@ -10,13 +10,14 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="virus, iter : ${viewModel}" th:object="${virus}">
+    <tr th:each="virus, iter : ${viewModel}" th:object="${virus}"
+        th:with="isAdmin = ${@authentication.isAdmin()}">
         <th scope="row" th:text="${iter.index + 1}"></th>
         <td th:text="*{name}"></td>
         <td th:text="*{magnitude}"></td>
         <td th:text="*{#temporals.format(releasedOn, 'dd-MMM-yyyy')}"></td>
-        <td><a class="btn btn-light border-dark" th:href="@{/viruses/edit/{id}(id = *{id})}">Edit</a></td>
-        <td><a class="btn btn-light border-dark" th:href="@{/viruses/delete/{id}(id = *{id})}">Delete</a></td>
+        <td th:if="${isAdmin}"><a class="btn btn-light border-dark" th:href="@{/viruses/edit/{id}(id = *{id})}">Edit</a></td>
+        <td th:if="${isAdmin}"><a class="btn btn-light border-dark" th:href="@{/viruses/delete/{id}(id = *{id})}">Delete</a></td>
     </tr>
     </tbody>
 </table>

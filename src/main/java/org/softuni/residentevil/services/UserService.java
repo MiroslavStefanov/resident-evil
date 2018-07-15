@@ -9,5 +9,7 @@ public interface UserService {
 
     String logInUser(UserLoginBindingModel userLoginBindingModel);
 
+    String getUserName(String userId);
+
     UserRole getUserRole(String userId);
 }
