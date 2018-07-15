@@ -1,7 +1,9 @@
 package org.softuni.residentevil.config;
 
 import org.modelmapper.ModelMapper;
+import org.softuni.residentevil.models.binding.UserRegisterBindingModel;
 import org.softuni.residentevil.models.binding.VirusBindingModel;
+import org.softuni.residentevil.models.entities.User;
 import org.softuni.residentevil.models.entities.Virus;
 import org.softuni.residentevil.models.view.VirusShowViewModel;
 import org.softuni.residentevil.repositories.CapitalRepository;
@@ -23,6 +25,7 @@ public class MapperConfig {
         virusBindingMapping();
         virusViewMapping();
         virusReverseBindingMapping();
+        userRegisterBindingMapping();
     }
 
     private void virusBindingMapping() {
@@ -41,6 +44,11 @@ public class MapperConfig {
     private void virusViewMapping() {
         this.mapper
                 .createTypeMap(Virus.class, VirusShowViewModel.class);
+    }
+
+    private void userRegisterBindingMapping() {
+        this.mapper
+                .createTypeMap(UserRegisterBindingModel.class, User.class);
     }
 
     @Bean

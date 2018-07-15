@@ -1,5 +1,6 @@
 package org.softuni.residentevil.controllers;
 
+import org.softuni.residentevil.core.validation.annotations.PreAuthenticate;
 import org.softuni.residentevil.models.binding.VirusBindingModel;
 import org.softuni.residentevil.models.view.VirusCreateViewModel;
 import org.softuni.residentevil.services.CapitalService;
@@ -24,6 +25,7 @@ public class VirusController extends BaseController {
         this.capitalService = capitalService;
     }
 
+    @PreAuthenticate(loggedIn = true)
     @GetMapping("/add")
     public ModelAndView create() {
         VirusCreateViewModel viewModel = new VirusCreateViewModel(
@@ -34,6 +36,7 @@ public class VirusController extends BaseController {
         return this.view("viruses/add", viewModel);
     }
 
+    @PreAuthenticate(loggedIn = true)
     @PostMapping("/add")
     public ModelAndView createPost(
             @Valid @ModelAttribute("viewModel") VirusCreateViewModel virusCreateViewModel,
@@ -50,6 +53,7 @@ public class VirusController extends BaseController {
         }
     }
 
+    @PreAuthenticate(loggedIn = true, inRole = "ADMIN")
     @GetMapping("/edit/{id}")
     public ModelAndView edit(@PathVariable(name="id")String id) {
         VirusBindingModel virusBindingModel = this.virusService.getVirus(id);
@@ -64,6 +68,7 @@ public class VirusController extends BaseController {
         return this.view("viruses/add", viewModel);
     }
 
+    @PreAuthenticate(loggedIn = true, inRole = "ADMIN")
     @PostMapping("/edit/{id}")
     public ModelAndView editPost(
             @Valid @ModelAttribute VirusCreateViewModel virusCreateViewModel,
@@ -83,6 +88,7 @@ public class VirusController extends BaseController {
         }
     }
 
+    @PreAuthenticate(loggedIn = true, inRole = "ADMIN")
     @GetMapping("/delete/{id}")
     public ModelAndView delete(@PathVariable(name="id")String id) {
         VirusBindingModel virusBindingModel = this.virusService.getVirus(id);
@@ -97,6 +103,7 @@ public class VirusController extends BaseController {
         return this.view("viruses/add", viewModel);
     }
 
+    @PreAuthenticate(loggedIn = true, inRole = "ADMIN")
     @PostMapping("/delete/{id}")
     public ModelAndView deletePost(@PathVariable(name="id") String id) {
         this.virusService.deleteVirus(id);

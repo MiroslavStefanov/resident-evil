@@ -1,0 +1,18 @@
+<div class="container jumbotron-fluid" xmlns:th="http://www.thymeleaf.org">
+    <h1 class="text-lg-center" th:text="'Register'"></h1>
+
+    <!--/*@thymesVar id="viewModel" type="org.softuni.residentevil.models.binding.UserLoginBindingModel"*/-->
+    <form method="post" th:object="${viewModel}">
+        <th:block th:insert="fragments/forms/form-control"
+                  th:with="type='text',label='Username',fieldName='username'">
+        </th:block>
+        <th:block th:insert="fragments/forms/form-control"
+                  th:with="type='password',label='Password',fieldName='password',errorText='Invalid username or password'">
+        </th:block>
+        <div class="form-group">
+            <div class="col-sm-4 offset-sm-5">
+                <input type="submit" class="btn btn-primary" th:value="'Login'"/>
+            </div>
+        </div>
+    </form>
+</div>

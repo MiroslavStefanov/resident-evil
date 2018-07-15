@@ -6,7 +6,7 @@
           th:object="${viewModel.virusBindingModel}">
         <fieldset th:disabled="${viewModel.action == 'delete'}" }>
             <th:block th:insert="fragments/forms/form-control"
-                      th:with="type='text',label='Name',fieldName='name',errorText='Invalid name', errorText = 'Invalid name'">
+                      th:with="type='text',label='Name',fieldName='name',errorText='Invalid name'">
             </th:block>
             <th:block th:insert="fragments/forms/form-control"
                       th:with="type='textarea',label='Description',fieldName='description',errorText='Invalid description'">
