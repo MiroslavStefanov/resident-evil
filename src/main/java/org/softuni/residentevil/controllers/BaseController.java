@@ -18,6 +18,17 @@ public abstract class BaseController {
         return modelAndView;
     }
 
+    protected ModelAndView view(String viewName, Object viewModel, boolean wholePage){
+        if(!wholePage)
+            return this.view(viewName, viewModel);
+
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.addObject("viewModel", viewModel);
+        modelAndView.setViewName(viewName);
+
+        return modelAndView;
+    }
+
     protected ModelAndView redirect(String location) {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("redirect:" + location);

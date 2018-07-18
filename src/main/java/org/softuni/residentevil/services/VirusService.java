@@ -15,4 +15,6 @@ public interface VirusService {
     Set<VirusShowViewModel> getAllViruses();
 
     VirusBindingModel getVirus(String id);
+
+    String getAllMapViruses();
 }

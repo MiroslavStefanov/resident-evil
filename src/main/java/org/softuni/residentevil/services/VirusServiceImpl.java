@@ -1,16 +1,22 @@
 package org.softuni.residentevil.services;
 
+import com.google.gson.Gson;
 import org.modelmapper.ModelMapper;
 import org.softuni.residentevil.models.binding.VirusBindingModel;
 import org.softuni.residentevil.models.entities.Capital;
+import org.softuni.residentevil.models.entities.Magnitude;
 import org.softuni.residentevil.models.entities.Virus;
 import org.softuni.residentevil.models.view.VirusShowViewModel;
+import org.softuni.residentevil.models.view.json.Feature;
+import org.softuni.residentevil.models.view.json.FeatureCollection;
 import org.softuni.residentevil.repositories.CapitalRepository;
 import org.softuni.residentevil.repositories.VirusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -21,12 +27,14 @@ public class VirusServiceImpl implements VirusService {
     private final VirusRepository virusRepository;
     private final CapitalRepository capitalRepository;
     private final ModelMapper modelMapper;
+    private final Gson gson;
 
     @Autowired
-    public VirusServiceImpl(VirusRepository virusRepository, CapitalRepository capitalRepository, ModelMapper modelMapper) {
+    public VirusServiceImpl(VirusRepository virusRepository, CapitalRepository capitalRepository, ModelMapper modelMapper, Gson gson) {
         this.virusRepository = virusRepository;
         this.capitalRepository = capitalRepository;
         this.modelMapper = modelMapper;
+        this.gson = gson;
     }
 
     @Override
@@ -120,5 +128,31 @@ public class VirusServiceImpl implements VirusService {
             );
 
         return ret;
+    }
+
+    private double getMagnitudeRadius(Magnitude magnitude) {
+        if(magnitude == Magnitude.Low)
+            return 5.6;
+        if(magnitude == Magnitude.Medium)
+            return 6.4;
+        return 7;
+    }
+
+    @Override
+    public String getAllMapViruses() {
+        FeatureCollection featureCollection = new FeatureCollection();
+        List<Virus> allViruses = this.virusRepository.findAll();
+        List<Feature> features = new ArrayList<>();
+        for (Virus virus : allViruses) {
+            for (Capital capital : virus.getCapitals()) {
+                features.add(new Feature(
+                        capital.getLatitude(),
+                        capital.getLongitude(),
+                        this.getMagnitudeRadius(virus.getMagnitude()))
+                );
+            }
+        }
+        featureCollection.setFeatures(features);
+        return this.gson.toJson(featureCollection);
     }
 }
