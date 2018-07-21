@@ -1,0 +1,24 @@
+<div class="container jumbotron-fluid" xmlns:th="http://www.thymeleaf.org">
+    <!--/*@thymesVar id="viewModel" type="org.softuni.residentevil.models.binding.UserEditBindingModel"*/-->
+    <h1 th:text="|User: ${viewModel.username}|"></h1>
+    <br/>
+    <form method="post"
+          th:object="${viewModel}">
+        <fieldset th:readonly="true">
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='text',label='Username',fieldName='username'">
+            </th:block>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='text',label='Email',fieldName='email'">
+            </th:block>
+        </fieldset>
+            <th:block th:insert="fragments/forms/form-control"
+                      th:with="type='select', fieldName='role', label='Role', isMultiple=false, collection=*{allRoles}, errorText='You must select role', isObject=false">
+            </th:block>
+        <div class="form-group">
+            <div class="d-flex justify-content-center">
+                <input type="submit" class="btn btn-primary" th:value="|Save changes|"/>
+            </div>
+        </div>
+    </form>
+</div>

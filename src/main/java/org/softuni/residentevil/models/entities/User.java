@@ -2,23 +2,29 @@ package org.softuni.residentevil.models.entities;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.softuni.residentevil.core.validation.annotations.Email;
-import org.softuni.residentevil.core.validation.annotations.Password;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
-public class User {
+public class User implements UserDetails {
     private String id;
     private String username;
     private String password;
     private String email;
-    private UserRole role;
+    private boolean isAccountNonExpired;
+    private boolean isAccountNonLocked;
+    private boolean isCredentialsNonExpired;
+    private boolean isEnabled;
+    private Set<Role> authorities;
 
     public User() {
-        this.role = UserRole.USER;
+        this.authorities = new HashSet<>();
     }
 
     @Id
@@ -36,6 +42,7 @@ public class User {
         this.id = id;
     }
 
+    @Override
     @NotNull
     @Size(min = 1, max = 50)
     @Column(length = 50, unique = true, nullable = false)
@@ -47,8 +54,9 @@ public class User {
         this.username = username;
     }
 
-    @Password(minLength = 4, maxLength = 20)
-    @Column(length = 20, nullable = false)
+    @Override
+    @NotNull
+    @Column(nullable = false)
     public String getPassword() {
         return password;
     }
@@ -66,13 +74,58 @@ public class User {
         this.email = email;
     }
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    public UserRole getRole() {
-        return role;
+    @Override
+    @Column(name="is_account_non_expired")
+    public boolean isAccountNonExpired() {
+        return true;
     }
 
-    public void setRole(UserRole role) {
-        this.role = role;
+    public void setAccountNonExpired(boolean accountNonExpired) {
+        isAccountNonExpired = accountNonExpired;
+    }
+
+    @Override
+    @Column(name="is_account_non_locked")
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    public void setAccountNonLocked(boolean accountNonLocked) {
+        isAccountNonLocked = accountNonLocked;
+    }
+
+    @Override
+    @Column(name="is_credentials_non_expired")
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    public void setCredentialsNonExpired(boolean credentialsNonExpired) {
+        isCredentialsNonExpired = credentialsNonExpired;
+    }
+
+    @Override
+    @Column(name="is_enabled")
+    public boolean isEnabled() {
+        return true;
+    }
+
+    public void setEnabled(boolean enabled) {
+        isEnabled = enabled;
+    }
+
+    @Override
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name="users_roles",
+            joinColumns = @JoinColumn(name="user_id"),
+            inverseJoinColumns = @JoinColumn(name="role_id")
+    )
+    public Set<Role> getAuthorities() {
+        return authorities;
+    }
+
+    public void setAuthorities(Set<Role> authorities) {
+        this.authorities = authorities;
     }
 }

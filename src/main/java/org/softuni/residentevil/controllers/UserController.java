@@ -1,6 +1,5 @@
 package org.softuni.residentevil.controllers;
 
-import org.softuni.residentevil.core.authentication.annotations.PreAuthenticate;
 import org.softuni.residentevil.models.binding.UserLoginBindingModel;
 import org.softuni.residentevil.models.binding.UserRegisterBindingModel;
 import org.softuni.residentevil.services.UserService;
@@ -10,15 +9,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/users")
-@PreAuthenticate
 public class UserController extends BaseController {
     private final UserService userService;
 
@@ -36,7 +33,7 @@ public class UserController extends BaseController {
     public ModelAndView registerPost(
             @Valid @ModelAttribute("viewModel") UserRegisterBindingModel userRegisterBindingModel,
             BindingResult bindingResult,
-            HttpSession httpSession
+            HttpServletRequest httpRequest
     ) {
         if(bindingResult.hasErrors()) {
             return super.view("users/register", userRegisterBindingModel);
@@ -46,39 +43,22 @@ public class UserController extends BaseController {
             return super.view("users/register", userRegisterBindingModel);
         } else {
             String loggedInUserId = this.userService.saveUser(userRegisterBindingModel);
-            if(loggedInUserId != null) {
-                httpSession.setAttribute("user-id", loggedInUserId);
-            }
-            return super.redirect("/home");
+            return super.redirect("/login");
         }
     }
 
     @GetMapping("/login")
-    public ModelAndView login() {
-        return super.view("users/login", new UserLoginBindingModel());
-    }
-
-    @PostMapping("/login")
-    public ModelAndView loginPost(
-            @ModelAttribute("viewModel") UserLoginBindingModel userLoginBindingModel,
-            BindingResult bindingResult,
-            HttpSession httpSession
-    ) {
-        String loggedInUserId = this.userService.logInUser(userLoginBindingModel);
-        if(loggedInUserId == null) {
-            bindingResult.rejectValue("username", "Invalid username or password");
-            bindingResult.rejectValue("password", "Invalid username or password");
-            return super.view("users/login", userLoginBindingModel);
-        } else {
-            httpSession.setAttribute("user-id", loggedInUserId);
-            return super.redirect("/home");
+    public ModelAndView login(@RequestParam(required = false, name = "error") String error, @ModelAttribute("viewModel") UserLoginBindingModel userLoginBindingModel, BindingResult bindingResult) {
+        if(error != null){
+            bindingResult.rejectValue("username", "");
+            bindingResult.rejectValue("password", error);
         }
+        return super.view("users/login", userLoginBindingModel);
     }
 
-    @PreAuthenticate(loggedIn = true)
+
     @GetMapping("/logout")
-    public ModelAndView logout(HttpSession httpSession) {
-        httpSession.removeAttribute("user-id");
+    public ModelAndView logout() {
         return super.redirect("/");
     }
  }

@@ -1,6 +1,5 @@
 package org.softuni.residentevil.controllers;
 
-import org.softuni.residentevil.core.authentication.annotations.PreAuthenticate;
 import org.softuni.residentevil.models.binding.VirusBindingModel;
 import org.softuni.residentevil.models.view.VirusCreateViewModel;
 import org.softuni.residentevil.services.CapitalService;
@@ -15,7 +14,6 @@ import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/viruses")
-@PreAuthenticate(loggedIn = true, inRole = "ADMIN")
 public class VirusController extends BaseController {
     private final VirusService virusService;
     private final CapitalService capitalService;
@@ -26,7 +24,6 @@ public class VirusController extends BaseController {
         this.capitalService = capitalService;
     }
 
-    @PreAuthenticate(loggedIn = true)
     @GetMapping("/add")
     public ModelAndView create() {
         VirusCreateViewModel viewModel = new VirusCreateViewModel(
@@ -37,7 +34,6 @@ public class VirusController extends BaseController {
         return this.view("viruses/add", viewModel);
     }
 
-    @PreAuthenticate(loggedIn = true)
     @PostMapping("/add")
     public ModelAndView createPost(
             @Valid @ModelAttribute("viewModel") VirusCreateViewModel virusCreateViewModel,
@@ -107,7 +103,6 @@ public class VirusController extends BaseController {
         return this.redirect("/viruses");
     }
 
-    @PreAuthenticate(loggedIn = true)
     @GetMapping("")
     public ModelAndView showAll() {
         return super.view("viruses/all", this.virusService.getAllViruses());

@@ -1,4 +1,5 @@
-<table class="table" xmlns:th="http://www.thymeleaf.org">
+<table class="table" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
     <!--/*@thymesVar id="viewModel" type="java.util.List<org.softuni.residentevil.models.view.VirusShowViewModel>"*/-->
     <!--/*@thymesVar id="virus" type="org.softuni.residentevil.models.view.VirusShowViewModel"*/-->
     <thead>
@@ -10,14 +11,13 @@
     </tr>
     </thead>
     <tbody>
-    <tr th:each="virus, iter : ${viewModel}" th:object="${virus}"
-        th:with="isAdmin = ${@authentication.isAdmin()}">
+    <tr th:each="virus, iter : ${viewModel}" th:object="${virus}">
         <th scope="row" th:text="${iter.index + 1}"></th>
         <td th:text="*{name}"></td>
         <td th:text="*{magnitude}"></td>
         <td th:text="*{#temporals.format(releasedOn, 'dd-MMM-yyyy')}"></td>
-        <td th:if="${isAdmin}"><a class="btn btn-light border-dark" th:href="@{/viruses/edit/{id}(id = *{id})}">Edit</a></td>
-        <td th:if="${isAdmin}"><a class="btn btn-light border-dark" th:href="@{/viruses/delete/{id}(id = *{id})}">Delete</a></td>
+        <td sec:authorize="hasAnyAuthority('ADMIN', 'MODERATOR')"><a class="btn btn-light border-dark" th:href="@{/viruses/edit/{id}(id = *{id})}">Edit</a></td>
+        <td sec:authorize="hasAnyAuthority('ADMIN', 'MODERATOR')"><a class="btn btn-light border-dark" th:href="@{/viruses/delete/{id}(id = *{id})}">Delete</a></td>
     </tr>
     </tbody>
 </table>

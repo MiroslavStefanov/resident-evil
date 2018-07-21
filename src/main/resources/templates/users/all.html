@@ -1,0 +1,24 @@
+<table class="table" xmlns:th="http://www.thymeleaf.org"
+       xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+    <!--/*@thymesVar id="viewModel" type="java.util.List<org.softuni.residentevil.models.view.UserViewModel>"*/-->
+    <!--/*@thymesVar id="user" type="org.softuni.residentevil.models.view.UserViewModel"*/-->
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">Username</th>
+        <th scope="col">Email</th>
+        <th scope="col">Role</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="user, iter : ${viewModel}" th:object="${user}">
+        <th scope="row" th:text="${iter.index + 1}"></th>
+        <td th:text="*{username}"></td>
+        <td th:text="*{email}"></td>
+        <td th:text="*{role}"></td>
+        <td th:if="${(user.username != #authentication.principal.username) && (user.role != 'ROOT')}">
+            <a class="btn btn-light border-dark" th:href="@{/admin/users/edit/{id}(id = *{id})}">Edit</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
